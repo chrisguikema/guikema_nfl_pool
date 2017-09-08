@@ -14,8 +14,6 @@ def get_scorecard():
     return scorecard
 
 def calculate_score(scorecard):
-    # TODO: Use Winner Spreadsheet to compare "lists" to determine score
-    #       len(set(a) & set(b)) is a possibility
     for name in scorecard:
         score = 0
         for i in range(1, 18):
@@ -45,18 +43,21 @@ def write_sched_csv(week, home, away):
         wr.writerow(home)
         wr.writerow(away)
 
-def append_winners_csv(week, winners):
-    with open('csv/Week %d.csv' % week, "ab") as guik_picks:
-        wr = csv.writer(guik_picks)
-        wr.writerow([])
-        wr.writerow(winners)
+def determine_correct_picks(week, winners, scorecard):
+    with open('csv/Week %d.csv' % week, "rb") as guik_picks:
+        rd = csv.reader(guik_picks)
+        for row in rd:
+            if row[1] in scorecard:
+                scorecard[row[1]]['week%d' % week] = len(set(row) & set(winners))
+
+    return scorecard
 
 def main(week):
     scorecard = get_scorecard()
     home, away = get_schedule(week)
     write_sched_csv(week, home, away)
     winners = get_winners(week)
-    append_winners_csv(week, winners)
+    scorecard = determine_correct_picks(week, winners, scorecard)
     calculate_score(scorecard)
 
 if __name__ == "__main__":
