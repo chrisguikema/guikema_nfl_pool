@@ -1,17 +1,29 @@
 #!/usr/bin/env python
 
 import nflgame, nflgame.update_sched
-import sys, csv, pdb
+import sys, csv, os
+import json
 
 def get_scorecard():
     scorecard = dict()
-    names = ['Curt', 'Amy', 'Laura', 'Tyler', 'Katie', 'Troy', 'Chris', 'Sam']
-    for name in names:
-        temp = { 'name': '%s' % name}
-        for i in range(1, 18):
-            temp.update({'week%d' % i: 0})
-        scorecard['%s' % name] = temp
+
+    if os.path.isfile('scorecard.json'):
+        with open('scorecard.json', 'r') as results:
+            scorecard = json.load(results)
+
+    else:
+        names = ['Curt', 'Amy', 'Laura', 'Tyler', 'Katie', 'Troy', 'Chris', 'Sam']
+        for name in names:
+            temp = { 'name': '%s' % name}
+            for i in range(1, 18):
+                temp.update({'week%d' % i: 0})
+                scorecard['%s' % name] = temp
+
     return scorecard
+
+def save_scorecard(scorecard):
+    with open('scorecard.json', 'w') as f:
+        json.dump(scorecard, f)
 
 def calculate_score(scorecard):
     for name in scorecard:
@@ -59,6 +71,7 @@ def main(week):
     winners = get_winners(week)
     scorecard = determine_correct_picks(week, winners, scorecard)
     calculate_score(scorecard)
+    save_scorecard(scorecard)
 
 if __name__ == "__main__":
     inputted_week = int(sys.argv[1:][0])
