@@ -4,6 +4,8 @@ import nflgame, nflgame.update_sched
 import sys, csv, os
 import json
 
+CSV_DIRECTORY = 'csv/'
+
 def get_scorecard():
     scorecard = dict()
 
@@ -25,12 +27,12 @@ def save_scorecard(scorecard):
     with open('scorecard.json', 'w') as f:
         json.dump(scorecard, f)
 
-def calculate_score(scorecard):
+def calculate_score(week, scorecard):
     for name in scorecard:
         score = 0
         for i in range(1, 18):
             score += scorecard[name]['week%d' % i]
-        print name, score
+        print name, scorecard[name]['week%d' % week], score
 
 def get_schedule(week):
     home = []
@@ -55,8 +57,8 @@ def write_sched_csv(week, home, away):
         wr.writerow(home)
         wr.writerow(away)
 
-def determine_correct_picks(week, winners, scorecard):
-    with open('csv/Week %d.csv' % week, "rb") as guik_picks:
+def determine_correct_picks_and_update_scorecard(week, winners, scorecard):
+    with open('%sWeek %d.csv' % (CSV_DIRECTORY, week), "rb") as guik_picks:
         rd = csv.reader(guik_picks)
         for row in rd:
             if row[1] in scorecard:
@@ -65,14 +67,19 @@ def determine_correct_picks(week, winners, scorecard):
     return scorecard
 
 def main(week):
-    scorecard = get_scorecard()
-    home, away = get_schedule(week)
-    write_sched_csv(week, home, away)
-    winners = get_winners(week)
-    scorecard = determine_correct_picks(week, winners, scorecard)
-    calculate_score(scorecard)
-    save_scorecard(scorecard)
+    if not os.path.isfile('%sWeek %d - sched.csv' % (CSV_DIRECTORY, week)):
+        print "Generating Schedule!"
+        home, away = get_schedule(week)
+        write_sched_csv(week, home, away)
+    else:
+        print "Calculating Score!"
+        scorecard = determine_correct_picks_and_update_scorecard(week, get_winners(week), get_scorecard())
+        calculate_score(week, scorecard)
+        save_scorecard(scorecard)
 
 if __name__ == "__main__":
+    if len(sys.argv[1:]) > 1:
+        print "Too Many Arguments!"
+        exit(-1)
     inputted_week = int(sys.argv[1:][0])
     main(inputted_week)
