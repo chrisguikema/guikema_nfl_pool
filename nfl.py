@@ -4,7 +4,8 @@ import nflgame, nflgame.update_sched
 import sys, csv, os
 import json
 
-CSV_DIRECTORY = 'csv/'
+CSV_DIRECTORY = 'csv/score/'
+SCHED_DIRECTORY = 'csv/sched/'
 
 def get_scorecard():
     scorecard = dict()
@@ -52,7 +53,7 @@ def get_winners(week):
     return winners
 
 def write_sched_csv(week, home, away):
-    with open('csv/Week %d - sched.csv' % week, "wb") as nfl_sched:
+    with open('%sWeek %d - sched.csv' % (SCHED_DIRECTORY, week), "wb") as nfl_sched:
         wr = csv.writer(nfl_sched)
         wr.writerow(away)
         wr.writerow(home)
@@ -67,7 +68,7 @@ def determine_correct_picks_and_update_scorecard(week, winners, scorecard):
     return scorecard
 
 def main(week):
-    if not os.path.isfile('%sWeek %d - sched.csv' % (CSV_DIRECTORY, week)):
+    if not os.path.isfile('%sWeek %d - sched.csv' % (SCHED_DIRECTORY, week)):
         print "Generating Schedule!"
         home, away = get_schedule(week)
         write_sched_csv(week, home, away)
