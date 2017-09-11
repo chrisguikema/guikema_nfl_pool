@@ -28,12 +28,31 @@ def save_scorecard(scorecard):
     with open('scorecard.json', 'w') as f:
         json.dump(scorecard, f)
 
-def calculate_score(week, scorecard):
+def print_sorted_scorecard(scorecard, week):
+    season_dict = dict()
+    week_dict = dict()
+
     for name in scorecard:
         score = 0
         for i in range(1, 18):
             score += scorecard[name]['week%d' % i]
-        print name, scorecard[name]['week%d' % week], score
+
+        week_dict['%s' % name] = scorecard[name]['week%d' % week]
+        season_dict['%s' % name] = score
+
+    print "----------------------"
+    print " 2017 Week %d Results" % week
+    print "----------------------"
+    for name, score in sorted(week_dict.items(), key=lambda p:p[1], reverse=True):
+        print name, score
+
+    print "---------------------"
+    print " 2017 Season Results"
+    print "---------------------"
+    for name, score in sorted(season_dict.items(), key=lambda p:p[1], reverse=True):
+        print name, score
+
+    print "---------------------"
 
 def get_schedule(week):
     home = []
@@ -75,8 +94,8 @@ def main(week):
     else:
         print "Calculating Score!"
         scorecard = determine_correct_picks_and_update_scorecard(week, get_winners(week), get_scorecard())
-        calculate_score(week, scorecard)
         save_scorecard(scorecard)
+        print_sorted_scorecard(scorecard, week)
 
 if __name__ == "__main__":
     if len(sys.argv[1:]) > 1:
