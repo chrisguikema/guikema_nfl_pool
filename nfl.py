@@ -54,8 +54,8 @@ def get_winners(week):
 def write_sched_csv(week, home, away):
     with open('csv/Week %d - sched.csv' % week, "wb") as nfl_sched:
         wr = csv.writer(nfl_sched)
-        wr.writerow(home)
         wr.writerow(away)
+        wr.writerow(home)
 
 def determine_correct_picks_and_update_scorecard(week, winners, scorecard):
     with open('%sWeek %d.csv' % (CSV_DIRECTORY, week), "rb") as guik_picks:
