@@ -28,6 +28,18 @@ function createForms() {
                 .setAllowResponseEdits(false)
                 .setAcceptingResponses(true);
 
+            var item = form.addMultipleChoiceItem();
+            item.setChoices([
+              item.createChoice('Curt'),
+              item.createChoice('Amy'),
+              item.createChoice('Laura'),
+              item.createChoice('Tyler'),
+              item.createChoice('Katie'),
+              item.createChoice('Troy'),
+              item.createChoice('Chris'),
+              item.createChoice('Sam'),
+            ]);
+
             for (var i = 0; i < num_games; i++) {
                 var item = form.addMultipleChoiceItem();
                 item.setChoices([
