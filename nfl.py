@@ -65,6 +65,11 @@ def get_schedule(week):
     return home, away
 
 def get_winners(week):
+
+    # Note: run the following command if there are games that have been played, but
+    #       this function isn't returing proper values
+    #
+    # sudo python /usr/local/lib/python2.7/dist-packages/nfldb/update.py
     winners = [None, None]
     games = nflgame.games(2017, week=week)
     for g in games:
