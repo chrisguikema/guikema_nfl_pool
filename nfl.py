@@ -3,6 +3,7 @@
 import nflgame, nflgame.update_sched
 import sys, csv, os
 import json
+import random
 
 CSV_DIRECTORY = 'csv/score/'
 SCHED_DIRECTORY = 'csv/sched/'
@@ -64,6 +65,28 @@ def get_schedule(week):
 
     return home, away
 
+def gen_random(week):
+    names = ['Curt', 'Amy', 'Laura', 'Tyler', 'Katie', 'Troy', 'Chris', 'Sam']
+    home, away = get_schedule(week)
+
+    with open('%sWeek %d.csv' % (CSV_DIRECTORY, week), "rb") as guik_picks:
+        rd = csv.reader(guik_picks)
+        for row in rd:
+            if row[1] in names:
+                names.remove(row[1])
+
+    if names is not None:
+        with open('%sWeek %d.csv' % (CSV_DIRECTORY, week), "ab") as guik_picks:
+            wr = csv.writer(guik_picks)
+            for name in names:
+                random_picks = ["\r", name]
+                for i in range(0, len(home)):
+                    if random.getrandbits(1):
+                        random_picks.append(home[i])
+                    else:
+                        random_picks.append(away[i])
+                wr.writerow(random_picks)
+
 def get_winners(week):
 
     # Note: run the following command if there are games that have been played, but
@@ -83,6 +106,7 @@ def write_sched_csv(week, home, away):
         wr.writerow(home)
 
 def determine_correct_picks_and_update_scorecard(week, winners, scorecard):
+    gen_random(week)
     with open('%sWeek %d.csv' % (CSV_DIRECTORY, week), "rb") as guik_picks:
         rd = csv.reader(guik_picks)
         for row in rd:
