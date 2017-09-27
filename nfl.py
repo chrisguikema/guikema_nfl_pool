@@ -3,7 +3,7 @@
 import nflgame, nflgame.update_sched
 import sys, csv, os
 import json
-import random
+import random, time
 
 CSV_DIRECTORY = 'csv/score/'
 SCHED_DIRECTORY = 'csv/sched/'
@@ -78,8 +78,9 @@ def gen_random(week):
     if names is not None:
         with open('%sWeek %d.csv' % (CSV_DIRECTORY, week), "ab") as guik_picks:
             wr = csv.writer(guik_picks)
+            now = time.strftime("%x") + " " + time.strftime("%X")
             for name in names:
-                random_picks = ["\r", name]
+                random_picks = ["\r" + now, name]
                 for i in range(0, len(home)):
                     if random.getrandbits(1):
                         random_picks.append(home[i])
